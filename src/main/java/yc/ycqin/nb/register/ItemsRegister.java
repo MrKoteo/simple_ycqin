@@ -8,6 +8,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import yc.ycqin.nb.common.item.*;
+import yc.ycqin.nb.common.item.armor.AntiFogGoggles;
 import yc.ycqin.nb.proxy.CommonProxy;
 
 @Mod.EventBusSubscriber
@@ -22,6 +23,8 @@ public class ItemsRegister {
     public static final Item YCQIN = new ItemYcqin();
     public static final Item UPGRADE = new ItemUpgrade();
     public static final Item ROOTERDROP = new ItemRooterDrop();
+    public static final Item RECORDER = new ItemRecruitmentOrder();
+    public static final AntiFogGoggles ANTI_FOG_GOGGLES = new AntiFogGoggles();
     public static Item CooldownAmulet;
     public static Item ANTIDOTEORB;
     public static Item PullImmunityCharm;
@@ -31,7 +34,7 @@ public class ItemsRegister {
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
         event.getRegistry().registerAll(
-                YCQIN,UPGRADE,ROOTERDROP
+                YCQIN,UPGRADE,ROOTERDROP,RECORDER,ANTI_FOG_GOGGLES
         );
         if (CommonProxy.isBaublesLoaded){
             CooldownAmulet = new ItemCooldownAmulet();

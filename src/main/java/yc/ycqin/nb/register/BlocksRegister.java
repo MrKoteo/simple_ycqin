@@ -15,11 +15,6 @@ import yc.ycqin.nb.common.block.*;
 
 @Mod.EventBusSubscriber
 public class BlocksRegister {
-    public static final Block BLOCKFINALSPECIMEN = new BlockFinalSpecimen();
-    public static final Block BLOCKSPCELL = new Blockspecimen_cell();
-    public static final Block BLOCKSPFARM = new Blockspecimen_farm();
-    public static final Block BLOCKSPINFECT = new Blockspecimen_infect();
-    public static final Block BLOCKCROPS = new BlockCrops();
     public static final Block BLOCKPARAASITECore = new BlockParasiteCore();
     public static final Block BLOCKLUREACTIVATOR = new BlockLureActivator();
     public static final Block BLOCKSHOOTER = new BlockShooter();
@@ -27,11 +22,6 @@ public class BlocksRegister {
     public static final Block BLOCKREDUCECORE = new BlockReducerCore();
 
     private static Block[] blocks = {
-            BLOCKFINALSPECIMEN,
-            BLOCKSPCELL,
-            BLOCKSPFARM,
-            BLOCKSPINFECT,
-            BLOCKCROPS,
             BLOCKPARAASITECore,
             BLOCKLUREACTIVATOR,
             BLOCKSHOOTER,

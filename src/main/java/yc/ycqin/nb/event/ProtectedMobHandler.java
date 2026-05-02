@@ -10,6 +10,7 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
+import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.Vec3d;
@@ -18,9 +19,12 @@ import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import yc.ycqin.nb.common.entity.ai.*;
+import yc.ycqin.nb.common.item.ItemRecruitmentOrder;
 import yc.ycqin.nb.config.ModConfig;
+import yc.ycqin.nb.register.PotionsRegister;
 import yc.ycqin.nb.util.EntityClassifier;
 import yc.ycqin.nb.util.ParasiteHelper;
 import yc.ycqin.nb.world.WorldLevelData;
@@ -34,6 +38,7 @@ public class ProtectedMobHandler {
 
     @SubscribeEvent
     public void onEntityJoinWorld(EntityJoinWorldEvent event) {
+        if (!ModConfig.isEnabledProtect) return;
         // 自然生成时，根据概率赋予 yc_protectcoth 标签（仅当世界等级 > 2 时）
         if (!event.getWorld().isRemote && event.getEntity() instanceof EntityLivingBase && !(event.getEntity() instanceof EntityParasiteBase)) {
             EntityLivingBase entity = (EntityLivingBase) event.getEntity();
@@ -41,10 +46,32 @@ public class ProtectedMobHandler {
                 WorldLevelData levelData = WorldLevelData.get(event.getWorld());
                 if (levelData.getLevel() > 2 && event.getWorld().rand.nextFloat() < ModConfig.naturalSpawnChance) {
                     // 检查是否是敌对生物
-                    if (entity instanceof EntityMob) {
-                        onProtectedSpawn(entity);
+                    if (!EntityClassifier.isBlacklisted(EntityClassifier.getEntityRegistryName(entity))){
+                        if (entity instanceof EntityMob) {
+                            onProtectedSpawn(entity);
+                        }
                     }
                 }
+            } else {
+                if (EntityClassifier.isBlacklisted(EntityClassifier.getEntityRegistryName(entity))){
+                    entity.getEntityData().removeTag("yc_protectcoth");
+                    return;
+                }
+                if (entity instanceof EntityMob) {
+                    applyCustomAI((EntityMob) entity);
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
+        if (event.getWorld().isRemote) return;
+        EntityPlayer player = event.getEntityPlayer();
+        ItemStack stack = player.getHeldItem(event.getHand());
+        if (stack.getItem() instanceof ItemRecruitmentOrder) {
+            if (ItemRecruitmentOrder.tryRecruit(player, event.getTarget(), stack, true)) {
+                event.setCanceled(true);
             }
         }
     }
@@ -53,27 +80,20 @@ public class ProtectedMobHandler {
      * 为生物添加保护标签并应用强化属性
      */
     public static void applyProtection(EntityLivingBase entity) {
+        if (!ModConfig.isEnabledProtect) return;
         entity.getEntityData().setBoolean("yc_protectcoth", true);
         updateDefense(entity);
         int level = WorldLevelData.get(entity.world).getLevel();
         if (level > 2) {
-            float maxShield = entity.getMaxHealth() * ModConfig.protectShieldRatio * level;
-            setMaxShield(entity, maxShield);
-            setShield(entity, maxShield);
+            resetShield(entity);
             setShieldCooldown(entity, 0); // 无冷却
         }
         if (level > 4) {
             entity.addPotionEffect(new PotionEffect(MobEffects.SPEED, Integer.MAX_VALUE, 3, false, false));
         }
-        if (entity instanceof EntityMob && !entity.getEntityData().hasKey("yc_ai_added")) {
-            entity.getEntityData().setBoolean("yc_ai_added", true);
+        if (entity instanceof EntityMob) {
             EntityMob mob = (EntityMob) entity;
-            mob.targetTasks.taskEntries.clear();
-            mob.targetTasks.addTask(3, new EntityAIHurtByTargetParasiteOnly(mob));
-            // 自主索敌寄生虫（优先级次高）
-            mob.targetTasks.addTask(1, new EntityAIFindParasite(mob, 20));
-            // 4. 其他辅助 AI
-            mob.tasks.addTask(3, new EntityAIPullDown(mob));      // 拉下空中寄生虫
+            applyCustomAI(mob);
         }
         entity.getEntityData().setFloat("yc_last_health", entity.getHealth());
 
@@ -83,6 +103,7 @@ public class ProtectedMobHandler {
      * 更新生物的防御值（盔甲）
      */
     private static void updateDefense(EntityLivingBase entity) {
+        if (!ModConfig.isEnabledProtect) return;
         int level = WorldLevelData.get(entity.world).getLevel();
         IAttributeInstance armorAttr = entity.getEntityAttribute(SharedMonsterAttributes.ARMOR);
         double baseArmor = armorAttr.getBaseValue();
@@ -92,6 +113,7 @@ public class ProtectedMobHandler {
 
     @SubscribeEvent
     public void onLivingAttack(LivingAttackEvent event) {
+        if (!ModConfig.isEnabledProtect) return;
         // 格挡并弹飞逻辑：当强化生物被寄生虫攻击时
         if (event.getEntityLiving().getEntityData().hasKey("yc_protectcoth")) {
             EntityLivingBase defender = event.getEntityLiving();
@@ -109,6 +131,7 @@ public class ProtectedMobHandler {
                         // 简化：给寄生虫缓慢效果和失明
                         attacker.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, ModConfig.stunDuration, 40));
                         attacker.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, ModConfig.stunDuration, 0));
+                        attacker.addPotionEffect(new PotionEffect(PotionsRegister.STUN,ModConfig.stunDuration, 0));
                     }
                 }
             }
@@ -117,6 +140,7 @@ public class ProtectedMobHandler {
 
     @SubscribeEvent
     public void onLivingHurt(LivingHurtEvent event) {
+        if (!ModConfig.isEnabledProtect) return;
         EntityLivingBase target = event.getEntityLiving();
         DamageSource source = event.getSource();
         Entity trueSource = source.getTrueSource();
@@ -136,8 +160,16 @@ public class ProtectedMobHandler {
                     float shield = getShield(target);
                     if (shield >= amount) {
                         // 伤害转为治疗效果
-                        target.setHealth(target.getHealth() + amount);
-                        amount = 0;
+                        float added = target.getHealth() + amount;
+                        setShield(target,shield - amount);
+                        if (added >= target.getMaxHealth()) {
+                            target.setHealth(target.getMaxHealth());
+                            amount = 0;
+                        } else {
+                            target.setHealth(added);
+                            amount = 0;
+                        }
+
                     } else {
                         // 伤害大于护盾，伤害减半，护盾清空，进入冷却
                         amount = amount / 2;
@@ -151,21 +183,23 @@ public class ProtectedMobHandler {
 
         // 2. 强化生物攻击寄生虫时的额外伤害
         if (trueSource instanceof EntityLivingBase && ((EntityLivingBase) trueSource).getEntityData().hasKey("yc_protectcoth")) {
+            int level = WorldLevelData.get(target.world).getLevel();
+            float extra = ModConfig.extraDamageBase * (float) Math.pow(ModConfig.extraDamageMultiplierPerLevel, level - 1);
             if (EntityClassifier.isTargetParasite(target)) {
-                int level = WorldLevelData.get(target.world).getLevel();
-                float extra = ModConfig.extraDamageBase * (float) Math.pow(ModConfig.extraDamageMultiplierPerLevel, level - 1);
-                event.setAmount(event.getAmount() + extra);
                 // 移除寄生虫的伤害适
                 if (target instanceof EntityPMalleable){
                     ParasiteHelper.reduceAllResistances((EntityPMalleable) target, 1.0f, 2);
                 }
-
+            } else {
+                extra = extra/2;
             }
+            event.setAmount(event.getAmount() + extra);
         }
     }
 
     @SubscribeEvent
     public void onLivingDeath(LivingDeathEvent event) {
+        if (!ModConfig.isEnabledProtect) return;
         EntityLivingBase dead = event.getEntityLiving();
         // 强化生物死亡时扣除点数
         if (dead.getEntityData().hasKey("yc_protectcoth")) {
@@ -188,6 +222,7 @@ public class ProtectedMobHandler {
 
     @SubscribeEvent
     public void onLivingUpdate(LivingEvent.LivingUpdateEvent event) {
+        if (!ModConfig.isEnabledProtect) return;
         EntityLivingBase entity = event.getEntityLiving();
         if (entity.getEntityData().hasKey("yc_protectcoth") && !entity.world.isRemote) {
             updateShieldCooldown(entity);
@@ -197,6 +232,7 @@ public class ProtectedMobHandler {
     // 强化生物生成时增加点数（在裂解装置生成时调用，也需要在自然生成时调用）
     // 自然生成时增加点数：可以在 applyProtection 中增加
     public static void onProtectedSpawn(EntityLivingBase entity) {
+        if (!ModConfig.isEnabledProtect) return;
         WorldLevelData.get(entity.world).addPoints(ModConfig.pointsOnProtectedSpawn);
         applyProtection(entity);
     }
@@ -207,11 +243,9 @@ public class ProtectedMobHandler {
     public static float getShield(EntityLivingBase entity) {
         return entity.getEntityData().getFloat("yc_shield");
     }
-    public static void setMaxShield(EntityLivingBase entity, float value) {
-        entity.getEntityData().setFloat("yc_max_shield", value);
-    }
     public static float getMaxShield(EntityLivingBase entity) {
-        return entity.getEntityData().getFloat("yc_max_shield");
+        int level = WorldLevelData.get(entity.world).getLevel();
+        return entity.getMaxHealth() * ModConfig.protectShieldRatio * level;
     }
     public static void setShieldCooldown(EntityLivingBase entity, long cooldownEnd) {
         entity.getEntityData().setLong("yc_shield_cooldown", cooldownEnd);
@@ -235,11 +269,26 @@ public class ProtectedMobHandler {
             resetShield(entity);
         }
     }
-    public static void addShield(EntityLivingBase entity, float amount) {
-        setShield(entity, getShield(entity) + amount);
-    }
-    public static void subtractShield(EntityLivingBase entity, float amount) {
-        float current = getShield(entity);
-        setShield(entity, Math.max(0, current - amount));
+
+    public static void applyCustomAI(EntityMob mob) {
+        if (!ModConfig.isEnabledProtect) return;
+        if (EntityClassifier.isBlacklisted(EntityClassifier.getEntityRegistryName(mob))) return;
+
+        mob.tasks.taskEntries.removeIf(entry ->
+                entry.action instanceof EntityAIFollowOwner ||
+                        entry.action instanceof EntityAIPullDown
+        );
+
+        mob.targetTasks.taskEntries.clear();
+
+        mob.targetTasks.addTask(3, new EntityAIHurtByTargetParasiteOnly(mob));
+        // 自主索敌寄生虫（优先级次高）
+        mob.targetTasks.addTask(2, new EntityAIFindParasite(mob, 20));
+        if (EntityClassifier.isTamed(mob)) {
+            mob.targetTasks.addTask(1, new EntityAIAttackWithOwner(mob));
+            mob.tasks.addTask(4, new EntityAIFollowOwner(mob, 1.2, 10.0f, 32.0f));
+        }
+        // 4. 其他辅助 AI
+        mob.tasks.addTask(3, new EntityAIPullDown(mob));      // 拉下空中寄生虫
     }
 }

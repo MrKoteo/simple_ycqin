@@ -8,6 +8,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import yc.ycqin.nb.recipe.EnchantUpgradeRecipe;
+import yc.ycqin.nb.recipe.RecipeAntiFogAttachment;
 
 @Mod.EventBusSubscriber
 public class RecipeRegister {
@@ -19,7 +20,7 @@ public class RecipeRegister {
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
         // 获取你的核心物品的ItemStack
-        ItemStack upgrade = new ItemStack(ItemsRegister.UPGRADE); // 替换为你的物品实例
+        ItemStack upgrade = new ItemStack(ItemsRegister.UPGRADE);
 
         // 创建自定义配方实例
         EnchantUpgradeRecipe recipe = new EnchantUpgradeRecipe(upgrade);
@@ -27,5 +28,6 @@ public class RecipeRegister {
 
         // 注册
         event.getRegistry().register(recipe);
+        event.getRegistry().register(new RecipeAntiFogAttachment().setRegistryName("anti_fog_attach"));
     }
 }

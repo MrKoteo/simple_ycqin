@@ -124,6 +124,7 @@ public class TileEntityReducerCore extends TileEntity implements ITickable {
     @Override
     public void update() {
         if (world.isRemote) return;
+        if (!ModConfig.isEnabledProtect) return;
         if (!ModConfig.reducerEnabled) return;
 
         long worldTime = world.getTotalWorldTime();
@@ -376,6 +377,12 @@ public class TileEntityReducerCore extends TileEntity implements ITickable {
             // 从配置列表中随机选择一个生物类型
             String mobName = ModConfig.reducerProtectedMobs[rand.nextInt(ModConfig.reducerProtectedMobs.length)];
             EntityLivingBase spawned = EntityClassifier.spawnProtectedMob(world, target.posX, target.posY, target.posZ, mobName);
+            EntityPlayer owner = world.getClosestPlayer(target.posX, target.posY, target.posZ, 16, false);
+            if (owner != null) {
+                if (spawned != null) {
+                    EntityClassifier.setOwner(spawned, owner.getName());
+                }
+            }
             if (spawned != null) {
                 ProtectedMobHandler.onProtectedSpawn(spawned);
             }

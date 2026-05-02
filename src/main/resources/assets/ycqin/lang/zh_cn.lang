@@ -1,21 +1,23 @@
 itemGroup.ycqin=ycqin
 
 key.categories.ycqin=YCQIN
-key.ycqin.toggle.ShowEvoBar=开关演化进度条
+
 
 item.ycqin.ycqin.name=歪C
 item.ycqin.ycqin.tooltip=§e右键传送至寄染维度，再次右键返回
 
-tile.ycqin.final_specimen.name=世界净化核心
+item.ycqin.recruitment_order.name=招募令
+item.ycqin.recruitment_order.tooltip=§e右键无主强化生物进行招募
+
+item.ycqin.fog_goggles.name=防雾眼镜
+item.ycqin.fog_goggles.tooltip1=§e佩戴后免疫灰色迷雾
+item.ycqin.fog_goggles.tooltip2=§e可与任意头盔合成转移效果
+item.ycqin.fog_goggles.tooltip3=已附加防雾眼镜
 
 item.ycqin.upgrade.name=超限附魔
 item.ycqin.upgrade.tooltip1=§e将其与任意带附魔物品合成使所有附魔等级加1 上限：%d
 item.ycqin.upgrade.tooltip2=§e在寄染维度击杀生物概率掉落
 
-tile.ycqin.specimen_farm.name=样本方块（农业）
-tile.ycqin.specimen_cell.name=样本方块（细胞）
-tile.ycqin.specimen_infect.name=样本方块（感染）
-tile.ycqin.crops.name=作物桶
 
 item.flammpfeil.slashblade.named.bloodstained_sky.name=§4寄染【血洗天穹】
 
@@ -57,6 +59,7 @@ item.ycqin.rooter_drop.name=庇植柱的肉膜
 
 item.ycqin.cooldown_amulet.name=心灵护符
 item.ycqin.cooldown_amulet.tooltip=§e免疫恐惧buff以及减少 %d orb给予玩家的物品冷却时间
+item.ycqin.cooldown_amulet.tooltip2=§e理智始终为满且每5秒增加2点勇气
 
 item.ycqin.antidote_orb.name=解毒球
 item.ycqin.antidote_orb.tooltip=§e免疫病毒及中毒buff
@@ -87,3 +90,9 @@ modifier.trait_min_damage_protect_armor.desc=每级减少1点最小伤害
 
 modifier.trait_adaptation_armor.name=适应性
 modifier.trait_adaptation_armor.desc=我也有伤害适应性！
+
+effect.ycqin.stun=眩晕
+potion.effect.ycqin:stun=眩晕药水
+splash_potion.effect.ycqin:stun=喷溅型眩晕药水
+lingering_potion.effect.ycqin:stun=滞留型眩晕药水
+tipped_arrow.effect.ycqin:stun=眩晕之箭

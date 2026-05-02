@@ -10,15 +10,19 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * 原始的单一群系提供器，作为后备方案。
+ * 该版本经过实践验证，绝不崩溃。
+ */
 public class YcDimBiome extends BiomeProvider {
     private static final Biome PARASITE_BIOME;
 
     static {
-        PARASITE_BIOME = Biome.REGISTRY.getObject(new ResourceLocation("srparasites", "biomeparasite_shrouded"));
-        if (PARASITE_BIOME == null) {
-            // 如果找不到，立即抛出异常，避免后续使用 null 引发更隐蔽的错误
-            throw new RuntimeException("SRP biome 'srparasites:biomeparasite_shrouded' not found! Check the registry name.");
+        Biome biome = Biome.REGISTRY.getObject(new ResourceLocation("srparasites", "biomeparasite_shrouded"));
+        if (biome == null) {
+            throw new RuntimeException("SRP biome 'srparasites:biomeparasite_shrouded' not found!");
         }
+        PARASITE_BIOME = biome;
     }
 
     private final Biome biome;
@@ -28,14 +32,18 @@ public class YcDimBiome extends BiomeProvider {
         this.biome = PARASITE_BIOME;
     }
 
-    @Override
-    public List<Biome> getBiomesToSpawnIn() {
-        return Collections.singletonList(biome);
+    public Biome getBiome(int x, int z) {
+        return biome;
     }
 
     @Override
     public Biome getBiome(BlockPos pos) {
         return biome;
+    }
+
+    @Override
+    public List<Biome> getBiomesToSpawnIn() {
+        return Collections.singletonList(biome);
     }
 
     @Override

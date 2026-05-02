@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import yc.ycqin.nb.common.trait.armorTrait.TraitMinDamageProtect;
+import yc.ycqin.nb.config.ModConfig;
 import yc.ycqin.nb.enchantment.EnchantmentMinDamageProtect;
 import yc.ycqin.nb.proxy.CommonProxy;
 import yc.ycqin.nb.register.ModEnchantments;
@@ -48,6 +49,7 @@ public abstract class MixinEntityParasiteBase {
         }
         if (level > 0) {
             // 每级减少 1 点最小伤害，最低为 0
+            level = (int) (level * ModConfig.MinDamageProtectMultiplierPerLevel);
             float newMinDamage = minimumDamage - level;
             return newMinDamage;
         }

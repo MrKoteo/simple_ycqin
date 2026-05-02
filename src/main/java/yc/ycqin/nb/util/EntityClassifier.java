@@ -34,7 +34,10 @@ public class EntityClassifier {
     }
 
     public static String getEntityRegistryName(Entity entity) {
-        ResourceLocation key = EntityRegistry.getEntry(entity.getClass()).getRegistryName();
+        if (entity == null) return null;
+        net.minecraftforge.fml.common.registry.EntityEntry entry = net.minecraftforge.fml.common.registry.EntityRegistry.getEntry(entity.getClass());
+        if (entry == null) return null;
+        ResourceLocation key = entry.getRegistryName();
         return key == null ? null : key.toString();
     }
 
@@ -110,6 +113,9 @@ public class EntityClassifier {
      */
     public static EntityLivingBase spawnProtectedMob(World world, double x, double y, double z, String mobName) {
         try {
+            if (isBlacklisted(mobName)) {
+                return null;
+            }
             ResourceLocation location = new ResourceLocation(mobName);
             EntityEntry entry = ForgeRegistries.ENTITIES.getValue(location);
             if (entry != null) {
@@ -129,5 +135,39 @@ public class EntityClassifier {
 
     public static boolean isTargetParasite(EntityLivingBase living) {
         return living instanceof EntityParasiteBase;
+    }
+
+    // 设置主人（玩家名）
+    public static void setOwner(EntityLivingBase entity, String ownerName) {
+        entity.getEntityData().setString("yc_owner_name", ownerName);
+    }
+
+    // 获取主人实体（通过玩家名查找）
+    public static EntityPlayer getOwner(EntityLivingBase entity, World world) {
+        String ownerName = entity.getEntityData().getString("yc_owner_name");
+        if (ownerName.isEmpty()) return null;
+        for (EntityPlayer player : world.playerEntities) {
+            if (player.getName().equals(ownerName)) return player;
+        }
+        return null;
+    }
+
+    // 检查是否已招募
+    public static boolean isTamed(EntityLivingBase entity) {
+        return !entity.getEntityData().getString("yc_owner_name").isEmpty();
+    }
+
+    public static boolean isBlacklisted(String registryName) {
+        if (registryName == null) return true;
+        for (String entry : ModConfig.protectedMobBlacklist) {
+            if (entry.contains(":")) {
+                // 完整注册名匹配
+                if (registryName.equals(entry)) return true;
+            } else {
+                // 模组ID匹配
+                if (registryName.startsWith(entry + ":")) return true;
+            }
+        }
+        return false;
     }
 }

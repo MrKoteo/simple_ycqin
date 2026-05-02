@@ -19,12 +19,8 @@ import yc.ycqin.nb.common.blade.BladeBloodstainedSky;
 import yc.ycqin.nb.common.blade.sa.SaLoader;
 import yc.ycqin.nb.common.blade.se.SeLoad;
 import yc.ycqin.nb.config.ModConfig;
-import yc.ycqin.nb.event.AdaptationReductionHandler;
-import yc.ycqin.nb.event.DimensionAttributeHandler;
-import yc.ycqin.nb.event.DropHandler;
-import yc.ycqin.nb.event.ProtectedMobHandler;
+import yc.ycqin.nb.event.*;
 import yc.ycqin.nb.register.*;
-import yc.ycqin.nb.srpcore.ParasiteEvolutionSync;
 
 public class CommonProxy {
     public static boolean isSlashBladeLoaded = false;
@@ -32,6 +28,7 @@ public class CommonProxy {
     public static boolean isTCLoaded = false;
     public static boolean isTCArmorLoaded = false;
     public static boolean isBaublesLoaded = false;
+    public static boolean isOverLoaded = false;
     public TinkerTraitsRegister tinkerTraitsRegister;
     public void preInit(FMLPreInitializationEvent event) {
         isSlashBladeLoaded = Loader.isModLoaded("flammpfeil.slashblade");
@@ -39,6 +36,7 @@ public class CommonProxy {
         isTCLoaded = Loader.isModLoaded("tconstruct");
         isTCArmorLoaded = Loader.isModLoaded("conarm");
         isBaublesLoaded = Loader.isModLoaded("baubles");
+        isOverLoaded = Loader.isModLoaded("overlast");
 
         new ItemsRegister();
         new SoundRegister();
@@ -46,10 +44,6 @@ public class CommonProxy {
         new NetworkRegister();
         new RecipeRegister();
         new EntityRegister();
-
-
-
-        // 2. 注册HUD渲染事件
 
         ModConfig.init(event.getSuggestedConfigurationFile());
         // 注册配置变更事件
@@ -59,11 +53,12 @@ public class CommonProxy {
     }
 
     public void init(FMLInitializationEvent event) {
-        MinecraftForge.EVENT_BUS.register(new ParasiteEvolutionSync());
+        //MinecraftForge.EVENT_BUS.register(new ParasiteEvolutionSync());
         MinecraftForge.EVENT_BUS.register(new DropHandler());
         MinecraftForge.EVENT_BUS.register(new DimensionAttributeHandler());
         MinecraftForge.EVENT_BUS.register(new AdaptationReductionHandler());
         MinecraftForge.EVENT_BUS.register(new ProtectedMobHandler());
+        MinecraftForge.EVENT_BUS.register(new SyncEvent());
         registerBrewingRecipe();
         if (isCgmModLoaded) regWorldWar();
         if (isTCLoaded){
@@ -93,37 +88,7 @@ public class CommonProxy {
     }
 
     private void regWorldWar(){
-        ItemStack output1 = new ItemStack(BlocksRegister.BLOCKFINALSPECIMEN);
-        ItemStack output2 = new ItemStack(BlocksRegister.BLOCKSPFARM);
-        ItemStack output3 = new ItemStack(BlocksRegister.BLOCKSPCELL);
-        ItemStack output4 = new ItemStack(BlocksRegister.BLOCKSPINFECT);
         ItemStack output5 = new ItemStack(BlocksRegister.BLOCKPARAASITECore);
-
-        ItemStack[] materials1 = new ItemStack[] {
-                new ItemStack(BlocksRegister.BLOCKSPCELL, 1),
-                new ItemStack(BlocksRegister.BLOCKSPINFECT, 1),
-                new ItemStack(BlocksRegister.BLOCKSPFARM, 1)
-        };
-        ItemStack[] materials2 = new ItemStack[] {
-                new ItemStack(BlocksRegister.BLOCKCROPS, 640),
-                new ItemStack(Blocks.PUMPKIN, 192)
-        };
-        ItemStack[] materials3 = new ItemStack[] {
-                getStackFromName("srparasites", "lurecomponent4", 32),
-                getStackFromName("srparasites", "lurecomponent5", 32),
-                getStackFromName("srparasites", "lurecomponent6", 32),
-                getStackFromName("srparasites", "ada_devourer_drop", 16)
-        };
-        ItemStack[] materials4 = new ItemStack[] {
-                getStackFromName("srparasites", "parasitesapling", 16),
-                getStackFromName("srparasites", "infestedrubble", 320),
-                getStackFromName("srparasites", "infestedstain", 320),
-                getStackFromName("srparasites", "parasitethin", 32),
-                getStackFromName("srparasites", "infestedbush", 128,3),
-                getStackFromName("srparasites", "parasitemouth", 32),
-                getStackFromName("srparasites", "parasiterubble", 64),
-                getStackFromName("srparasites", "biomeheart", 1)
-        };
         ItemStack[] materials5 = new ItemStack[] {
                 getStackFromName("srparasites","biomepurifier",384),
                 getStackFromName("srparasites","module_origin",1),
@@ -131,12 +96,7 @@ public class CommonProxy {
                 getStackFromName("srparasites","module_vectors",1),
                 getStackFromName("srparasites","module_phase",1)
         };
-
         // 注册配方
-        WorkbenchRegistry.registerRecipe(output1, materials1);
-        WorkbenchRegistry.registerRecipe(output2, materials2);
-        WorkbenchRegistry.registerRecipe(output3, materials3);
-        WorkbenchRegistry.registerRecipe(output4, materials4);
         WorkbenchRegistry.registerRecipe(output5, materials5);
     }
 

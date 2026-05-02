@@ -7,14 +7,16 @@
   "target": "@env(DEFAULT)",
   "mixins": [
     "MixinBeckonBlockInfestation",
-    "MixinBlockFluid",
     "MixinBlockParasiteSpreading",
     "MixinEntityParasiteBase",
     "MixinEntityPMalleable",
     "MixinParasiteEventEntity",
-    "MixinPotionNeedler",
     "MixinSRPEffectBase",
-    "baubles.MixinEntityRanrac",
-    "baubles.MixinEntityRanracAdapted"
+    "baubles.MixinEntityProjectilePullball"
+
+  ],
+  "client": [
+    "client.MixinSRPPacketFogHandler",
+    "client.MixinSRPEventHandlerBus"
   ]
 }

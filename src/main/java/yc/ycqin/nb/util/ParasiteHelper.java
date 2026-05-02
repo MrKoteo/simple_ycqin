@@ -74,8 +74,15 @@ public class ParasiteHelper {
         Entity originalEntity = EntityList.createEntityByIDFromName(new ResourceLocation(originalRegName), world);
         if (originalEntity instanceof EntityLivingBase) {
             EntityLivingBase mob = replaceEntity(infectedEntity, (EntityLivingBase) originalEntity);
+
             if (mob != null) {
-                ProtectedMobHandler.onProtectedSpawn(mob);
+                if (!EntityClassifier.isBlacklisted(EntityClassifier.getEntityRegistryName(mob))){
+                    EntityPlayer owner = world.getClosestPlayer(mob.posX, mob.posY, mob.posZ, 16, false);
+                    if (owner != null) {
+                        EntityClassifier.setOwner(mob, owner.getName());
+                    }
+                    ProtectedMobHandler.onProtectedSpawn(mob);
+                }
             }
             return mob;
         }
@@ -104,7 +111,9 @@ public class ParasiteHelper {
         }
 
         // 添加保护标签
-        newEntity.getEntityData().setBoolean("yc_protectcoth", true);
+        if (!EntityClassifier.isBlacklisted(EntityClassifier.getEntityRegistryName(newEntity))){
+            newEntity.getEntityData().setBoolean("yc_protectcoth", true);
+        }
 
         // 生成新实体
         world.spawnEntity(newEntity);

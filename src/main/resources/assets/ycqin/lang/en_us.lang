@@ -1,21 +1,22 @@
 itemGroup.ycqin=ycqin
 
 key.categories.ycqin=YCQIN
-key.ycqin.toggle.ShowEvoBar=open/close EvolutionStatBar
 
 item.ycqin.ycqin.name=ycqin
 item.ycqin.ycqin.tooltip=§eRight-click to teleport to the Infested Dimension, right-click again to return.
 
-tile.ycqin.final_specimen.name=World Purification Core
+item.ycqin.recruitment_order.name=Recruitment Order
+item.ycqin.recruitment_order.tooltip=§eRight-click on an unowned enhanced creature to recruit
+
+item.ycqin.fog_goggles.name=Fog Goggles
+item.ycqin.fog_goggles.tooltip1=§eImmune to gray fog while worn
+item.ycqin.fog_goggles.tooltip2=§eCombine with any helmet to transfer effect
+item.ycqin.fog_goggles.tooltip3=Fog goggles applied
 
 item.ycqin.upgrade.name=Overlimit Enchantment
 item.ycqin.upgrade.tooltip1=§eCombine with any enchanted item to increase all enchantment levels by 1. Max: %d
 item.ycqin.upgrade.tooltip2=§eDropped with chance from killing mobs in the Infested Dimension
 
-tile.ycqin.specimen_farm.name=Specimen Block (Agriculture)
-tile.ycqin.specimen_cell.name=Specimen Block (Cell)
-tile.ycqin.specimen_infect.name=Specimen Block (Infection)
-tile.ycqin.crops.name=Crop Barrel
 enchantment.min_damage_protect=Minimum Damage Protection
 enchantment.yc_min_damage=Minimum Damage
 enchantment.adaptation=Adaptation
@@ -55,6 +56,7 @@ item.ycqin.rooter_drop.name=Pillar Root Membrane
 
 item.ycqin.cooldown_amulet.name=Mindward Amulet
 item.ycqin.cooldown_amulet.tooltip=§eImmune to Fear buff and reduces the item cooldown granted by %d orb to the player
+item.ycqin.cooldown_amulet.tooltip2=§eKeep sanity always full and gain 2 courage every 5 seconds.
 
 item.ycqin.antidote_orb.name=Antidote Sphere
 item.ycqin.antidote_orb.tooltip=§eImmune to Viral and Poison buffs
@@ -85,3 +87,9 @@ modifier.trait_min_damage_protect_armor.desc=Reduces minimum damage by 1 per lev
 
 modifier.trait_adaptation_armor.name=Adaptability
 modifier.trait_adaptation_armor.desc=I have damage adaptability too!
+
+effect.ycqin.stun=Stun
+potion.effect.ycqin:stun=Potion of Stun
+splash_potion.effect.ycqin:stun=Splash Potion of Stun
+lingering_potion.effect.ycqin:stun=Lingering Potion of Stun
+tipped_arrow.effect.ycqin:stun=Arrow of Stun

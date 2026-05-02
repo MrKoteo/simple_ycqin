@@ -17,6 +17,8 @@ public class ModelsRegister {
         registerModel(ItemsRegister.YCQIN);
         registerModel(ItemsRegister.UPGRADE);
         registerModel(ItemsRegister.ROOTERDROP);
+        registerModel(ItemsRegister.RECORDER);
+        registerModel(ItemsRegister.ANTI_FOG_GOGGLES);
         if (CommonProxy.isBaublesLoaded){
             registerModel(ItemsRegister.CooldownAmulet);
             registerModel(ItemsRegister.ANTIDOTEORB);

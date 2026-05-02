@@ -9,6 +9,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import yc.ycqin.nb.common.entity.tileentity.TileEntityParasiteCore;
 
+import java.util.Random;
+
 @Mixin(BlockParasiteSpreading.class)
 public abstract class MixinBlockParasiteSpreading {
 
@@ -25,4 +27,17 @@ public abstract class MixinBlockParasiteSpreading {
             // 参考 BlockParasiteSpreading.positionToParasiteBiome 的反向操作
         }
     }
+
+    @Inject(
+            method = "spreadBiomeBlockStain",
+            at = @At("HEAD"),
+            cancellable = true,
+            remap = false
+    )
+    private static void onSpreadBiomeBlockStain(World worldIn, BlockPos pos, Random rand, CallbackInfo ci){
+        if (worldIn.provider.getDimension() == 78){
+            ci.cancel();
+        }
+    }
+
 }

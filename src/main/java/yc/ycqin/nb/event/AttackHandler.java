@@ -17,6 +17,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import yc.ycqin.nb.common.trait.armorTrait.TraitMinDamageProtect;
+import yc.ycqin.nb.config.ModConfig;
 import yc.ycqin.nb.proxy.CommonProxy;
 import yc.ycqin.nb.register.ModEnchantments;
 
@@ -35,6 +36,7 @@ public class AttackHandler {
         ItemStack weapon = player.getHeldItemMainhand();
         int level = EnchantmentHelper.getEnchantmentLevel(ModEnchantments.MIN_DAMAGE, weapon);
         if (level <= 0) return; // 没有附魔，交给原版处理
+        level = (int) (level*ModConfig.MinDamageMultiplierPerLevel);
         attackWithMinimumDamage(livingTarget,level,player);
     }
 
@@ -70,7 +72,8 @@ public class AttackHandler {
                 level = EnchantmentHelper.getEnchantmentLevel(ModEnchantments.MIN_DAMAGE_PROTECT, chest);
             }
             if (level > 0) {
-                finalDamage = Math.max(0, finalDamage - level); // 每级减少1点
+                level = (int) (level * ModConfig.MinDamageProtectMultiplierPerLevel);
+                finalDamage = Math.max(0, finalDamage - level);
             }
         }
 

@@ -7,6 +7,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.init.MobEffects;
 import net.minecraft.util.DamageSource;
 import yc.ycqin.nb.config.ModConfig;
+import yc.ycqin.nb.register.PotionsRegister;
 import yc.ycqin.nb.util.EntityClassifier;
 import yc.ycqin.nb.world.WorldLevelData;
 
@@ -58,6 +59,7 @@ public class EntityAIPullDown extends EntityAIBase {
             // 眩晕效果
             target.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, ModConfig.pullDownStun, 40));
             target.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, ModConfig.pullDownStun, 0));
+            target.addPotionEffect(new PotionEffect(PotionsRegister.STUN,ModConfig.stunDuration, 0));
         }
         cooldown = 40; // 每次尝试后冷却 2 秒
         target = null;

@@ -1,6 +1,8 @@
 package yc.ycqin.nb.event;
 
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Optional;
@@ -25,5 +27,8 @@ public class TooltipEventHandler {
     @SubscribeEvent
     public static void onItemTooltipEnchantment(ItemTooltipEvent event) {
         EnchantmentAdaptation.addTooltip(event.getItemStack(), event.getToolTip());
+        if (event.getItemStack().getSubCompound("AntiFog") != null && event.getItemStack().getSubCompound("AntiFog").getBoolean("Active")){
+            event.getToolTip().add(TextFormatting.GRAY + I18n.format("item.ycqin.fog_goggles.tooltip3"));
+        }
     }
 }

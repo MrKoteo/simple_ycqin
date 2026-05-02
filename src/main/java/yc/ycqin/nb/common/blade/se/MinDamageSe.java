@@ -23,6 +23,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import yc.ycqin.nb.common.trait.armorTrait.TraitMinDamageProtect;
+import yc.ycqin.nb.config.ModConfig;
 import yc.ycqin.nb.proxy.CommonProxy;
 import yc.ycqin.nb.register.ModEnchantments;
 
@@ -78,6 +79,7 @@ public class MinDamageSe implements ISpecialEffect {
                     }
 
                     if (level > 0) {
+                        level = (int) (level * ModConfig.MinDamageProtectMultiplierPerLevel);
                         damage = Math.max(0, damage - level); // 每级减少1点
                     }
                 }

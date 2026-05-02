@@ -7,6 +7,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import slimeknights.tconstruct.library.modifiers.IModifierDisplay;
 import slimeknights.tconstruct.library.modifiers.ModifierNBT;
 import slimeknights.tconstruct.library.modifiers.ModifierTrait;
+import yc.ycqin.nb.config.ModConfig;
 import yc.ycqin.nb.event.AttackHandler;
 import yc.ycqin.nb.proxy.CommonProxy;
 
@@ -28,6 +29,7 @@ public class TraitMinDamage extends ModifierTrait {
         ModifierNBT.IntegerNBT data = getData(tool);
         int level = data.level;  // 当前等级
         if (level > 0) {
+            level = (int) (level* ModConfig.MinDamageMultiplierPerLevel);
             AttackHandler.attackWithMinimumDamage(target, level, player);
         }
         return newDamage;

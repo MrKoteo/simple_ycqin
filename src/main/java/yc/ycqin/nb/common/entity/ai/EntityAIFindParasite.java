@@ -50,6 +50,6 @@ public class EntityAIFindParasite extends EntityAITarget {
 
     @Override
     public boolean shouldContinueExecuting() {
-        return target != null && target.isEntityAlive() && entity.getAttackTarget() == target;
+        return false;
     }
 }

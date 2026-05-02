@@ -48,7 +48,6 @@ public class ItemYcqin extends Item {
         this.setUnlocalizedName(ycqin.MODID+"."+"ycqin");
         this.setCreativeTab(ItemsRegister.YCQIN_TABLE);
         this.setMaxStackSize(1);
-
     }
 
     @SideOnly(Side.CLIENT)

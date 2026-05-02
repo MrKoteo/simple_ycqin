@@ -10,8 +10,8 @@ public class KeyInputHandler {
     public void onKeyInput(InputEvent.KeyInputEvent event) {
         // 检查我们自定义的按键是否被按下
 
-        if (KeyBindings.isShowEvoBar.isPressed()) {
-            ModConfig.evolutionBarEnabled = !ModConfig.evolutionBarEnabled;
-        }
+        //if (KeyBindings.isShowEvoBar.isPressed()) {
+        //    ModConfig.evolutionBarEnabled = !ModConfig.evolutionBarEnabled;
+        //}
     }
 }

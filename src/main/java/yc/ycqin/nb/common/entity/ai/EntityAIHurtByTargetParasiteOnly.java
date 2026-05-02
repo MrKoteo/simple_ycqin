@@ -3,6 +3,8 @@ package yc.ycqin.nb.common.entity.ai;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAITarget;
 import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.player.EntityPlayer;
+import yc.ycqin.nb.util.EntityClassifier;
 
 public class EntityAIHurtByTargetParasiteOnly extends EntityAITarget {
     private final EntityMob entity;
@@ -17,6 +19,10 @@ public class EntityAIHurtByTargetParasiteOnly extends EntityAITarget {
     public boolean shouldExecute() {
         if (!entity.getEntityData().hasKey("yc_protectcoth")) return false;
         EntityLivingBase attacker = entity.getRevengeTarget();
+        if (EntityClassifier.isTamed(entity)) {
+            EntityPlayer owner = EntityClassifier.getOwner(entity, entity.world);
+            if (owner != null && owner == attacker) return false;
+        }
         return attacker != null && attacker.isEntityAlive();
     }
 
